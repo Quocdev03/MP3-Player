@@ -107,6 +107,12 @@ body {
    }
 }
 
+.song-name {
+   font-size: 17px;
+   font-weight: 500;
+   margin: 10px 0;
+}
+
 .progress {
    margin-bottom: 20px;
    margin-top: 25px;

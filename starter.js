@@ -1,14 +1,16 @@
 window.addEventListener("load", function () {
    const song = document.querySelector("#song");
+   const songName = document.querySelector(".song-name");
    const playButton = document.querySelector(".player-play");
    const prevButton = document.querySelector(".player-prev");
    const nextButton = document.querySelector(".player-next");
    const playerduration = document.querySelector(".player-duration");
    const remaining = document.querySelector(".player-remaining");
-   const bar = document.querySelector("#progress-bar");
+   const progressbar = document.querySelector("#progress-bar");
    const playerImage = document.querySelector(".player-image");
    let playing = true;
-   const list = ["holo.mp3", "summer.mp3", "home.mp3", "spark.mp3", "dreams.mp3", "WhereWeStarted.mp3"];
+   const listMusic = ["holo.mp3", "summer.mp3", "home.mp3", "spark.mp3", "dreams.mp3", "WhereWeStarted.mp3"];
+   const listSongName = ["Ampyx - Holo", "Last Summer", "Home", "Vexento - Spark", "Lost Sky - Dreams", "Lost Sky - Where We Started"];
    let songIndex = 0;
    playButton.addEventListener("click", handleMusicPlay);
    nextButton.addEventListener("click", function () {
@@ -25,21 +27,25 @@ window.addEventListener("load", function () {
       if (direction === 1) {
          // next music
          songIndex++;
-         if (songIndex > list.length - 1) {
+         if (songIndex > listMusic.length - 1) {
             songIndex = 0;
             return;
          }
+         // ListSongName[songIndex]
+         songName.textContent = listSongName[songIndex];
          // list[songIndex]
-         song.setAttribute("src", `./files/${list[songIndex]}`);
+         song.setAttribute("src", `./files/${listMusic[songIndex]}`);
          playing = true;
          handleMusicPlay();
       } else if (direction === -1) {
          songIndex--;
          if (songIndex < 0) {
-            songIndex = list.length - 1;
+            songIndex = listMusic.length - 1;
          }
+         // ListSongName[songIndex]
+         songName.textContent = listSongName[songIndex];
          // list[songIndex]
-         song.setAttribute("src", `./files/${list[songIndex]}`);
+         song.setAttribute("src", `./files/${listMusic[songIndex]}`);
          playing = true;
          handleMusicPlay();
       }
@@ -58,12 +64,28 @@ window.addEventListener("load", function () {
       }
    }
    function displayTimer() {
+      const { duration, currentTime } = song;
+      progressbar.max = duration;
+      progressbar.value = currentTime;
       // const duration = song.duration;
       // const currentTime = song.currentTime;
-      const { duration, currentTime } = song;
-      const minutes = Math.floor(Math.ceil(duration) / 60);
-      const second = parseInt(duration) - minutes * 60;
-      playerduration.textContent = `${minutes}:${second}`;
+      remaining.textContent = formatTimer(currentTime);
+      if (!duration) {
+         playerduration.textContent = "0:00";
+      } else {
+         playerduration.textContent = formatTimer(duration);
+      }
    }
-   const timer = setInterval(displayTimer, 1000);
+   function formatTimer(number) {
+      const minutes = Math.floor(number / 60);
+      const seconds = Math.floor(number) - minutes * 60;
+      return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+   }
+   progressbar.addEventListener("change", handleDragProgressBar);
+   function handleDragProgressBar() {
+      song.currentTime = progressbar.value;
+   }
+   displayTimer();
+   const timer = setInterval(displayTimer, 500);
 });
+//267
